@@ -91,6 +91,8 @@ model Race {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   PlayerRace PlayerRace[]
+  event      Event?       @relation(fields: [eventId], references: [id])
+  eventId    String?      @unique
 }
 
 model PlayerRace {
@@ -112,4 +114,18 @@ model PlayerRace {
 
   @@unique([playerId, raceId])
   @@unique([raceId, position])
+}
+
+model Event {
+  id            String    @id @default(cuid())
+  date          DateTime?
+  scheduledDate DateTime?
+  track         String?
+  laps          Int?
+  ip            String?
+  serverStatus  String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  resultsUrl    String?
+  Race          Race?
 }

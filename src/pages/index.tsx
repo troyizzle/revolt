@@ -9,10 +9,22 @@ type LeaderboardProps = {
 
 function Leaderboard({ players }: LeaderboardProps) {
   return (
-    <div id="leaderboard" className="flex flex-col space-y-2 items-center w-full">
-      {players.map((player) => (
-        <PlayerRow key={player.id} player={player} />
-      ))}
+    <div className="w-full overflow-auto">
+      <table id="leaderboard" className="table w-full">
+        <thead>
+          <tr>
+            <th>Driver</th>
+            <th>Points</th>
+            <th>Races</th>
+            <th>Average</th>
+          </tr>
+        </thead>
+        <tbody>
+          {players.map((player) => (
+            <PlayerRow key={player.id} player={player} />
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -23,9 +35,12 @@ type PlayerRowProps = {
 
 function PlayerRow({ player }: PlayerRowProps) {
   return (
-    <div className="flex flex-row items-center">
-      {player.name} - {player.totalPoints?.toString()}
-    </div>
+    <tr>
+      <td>{player.name}</td>
+      <td>{player.score}</td>
+      <td>{player.races}</td>
+      <td>{player.average}</td>
+    </tr>
   )
 }
 
@@ -38,6 +53,8 @@ const Home: NextPage = () => {
   if (!playersWithScore.data) {
     return <div>Loading...</div>;
   }
+
+  console.log(playersWithScore.data)
 
   return (
     <>

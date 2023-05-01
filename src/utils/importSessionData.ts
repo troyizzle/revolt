@@ -64,7 +64,7 @@ export const parseCsvData = (data: CsvResult[]): addRaceResultsInput => {
 
     if (Number(d[0])) {
       const player: Player = d as Player
-      console.log(d, player[4])
+
       parsed.results.push({
         position: Number(player[0]),
         player: player[1].trim(),
@@ -80,14 +80,17 @@ export const parseCsvData = (data: CsvResult[]): addRaceResultsInput => {
   return parsed
 }
 
-export const importCsvData = async (input: addRaceResultsInput, prisma: PrismaClient) => {
+export const importCsvData = async (input: addRaceResultsInput, prisma: PrismaClient, eventId?: string) => {
   const race = await prisma.race.create({
-    data: { map: input.map }
+    data: {
+      map: input.map, laps: input.laps,
+      eventId: !eventId ? null : eventId,
+    }
   })
 
   input.results.forEach(async (result, index) => {
     const { player: playerName, ...rest } = result
-    console.log("on player", playerName)
+
     try {
       const player = await prisma.player.upsert({
         where: {

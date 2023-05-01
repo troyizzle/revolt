@@ -16,16 +16,35 @@ export const playerRouter = createTRPCRouter({
     })
   }),
   getAllWithScore: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.$queryRaw<{ id: string, name: string, totalPoints?: number }[]>(
-      Prisma.sql`SELECT "Player"."id", "Player"."name", "PlayerScore"."totalPoints"
+    type playerTableData = {
+      id: string,
+      name: string,
+      score?: number,
+      races?: number,
+      average?: number,
+    }
+    return ctx.prisma.$queryRaw<playerTableData[]>(
+      Prisma.sql`SELECT "Player"."id",
+      "Player"."name",
+      "PlayerScore"."score",
+      "PlayerScore"."races",
+      "PlayerScore"."average"
       FROM "Player"
       LEFT JOIN (
-        SELECT "Player"."id", SUM("PlayerRace"."points") AS "totalPoints"
+        SELECT "Player"."id",
+          SUM("PlayerRace"."points")::integer AS "score",
+          COUNT("PlayerRace"."id")::integer AS "races",
+          CASE
+            WHEN COUNT("PlayerRace"."id") = 0 THEN 0
+            WHEN SUM("PlayerRace"."points") = 0 THEN 0
+            ELSE ROUND((cast(SUM("PlayerRace"."points") as decimal) / COUNT("PlayerRace"."id")), 2)
+          END AS "average"
+
         FROM "Player"
         LEFT JOIN "PlayerRace" ON "Player"."id" = "PlayerRace"."playerId"
         GROUP BY "Player"."id"
       ) AS "PlayerScore" ON "Player"."id" = "PlayerScore"."id"
-      ORDER BY "totalPoints" DESC`
+      ORDER BY "score" DESC`
     )
   }),
   create: protectedProcedure
