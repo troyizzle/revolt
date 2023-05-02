@@ -2,6 +2,7 @@
 import { signOut, useSession } from "next-auth/react";
 import Avatar from "./Avatar";
 import { AVAILABLE_THEMES, Theme, useTheme } from "~/context/ThemeContext";
+import { Session } from "next-auth";
 
 function UserMenu() {
   return (
@@ -34,8 +35,11 @@ function ThemeMenu() {
   )
 }
 
-export default function Navbar() {
-  const { data: session } = useSession();
+type NavbarProps = {
+  session: Session | null;
+}
+
+export default function Navbar({ session }: NavbarProps) {
 
   return (
     <div className="navbar bg-base-300">
@@ -56,7 +60,7 @@ export default function Navbar() {
               <Avatar url={session?.user?.image ?? ""} />
             </div>
           </label>
-          <UserMenu />
+          {session && session.user ? <UserMenu /> : <>Log in</>}
         </div>
       </div>
     </div >

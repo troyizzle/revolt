@@ -119,7 +119,7 @@ model PlayerRace {
 model Event {
   id            String    @id @default(cuid())
   date          DateTime?
-  scheduledDate DateTime?
+  scheduledDate DateTime? @db.Date
   track         String?
   laps          Int?
   ip            String?

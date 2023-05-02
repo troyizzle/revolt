@@ -11,6 +11,10 @@ function parseDate(date: string) {
   return utc(date, date_format).toDate();
 }
 
+function parseScheduleDate(date: string) {
+  return new Date(date)
+}
+
 async function main() {
   await prisma.player.deleteMany()
   await prisma.event.deleteMany()
@@ -91,7 +95,7 @@ async function main() {
   for (const date of scheduleEvents) {
     await prisma.event.create({
       data: {
-        scheduledDate: parseDate(date),
+        scheduledDate: parseScheduleDate(date),
         serverStatus: 'CREATED'
       }
     })
