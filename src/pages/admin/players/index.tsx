@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import Avatar from "~/components/UI/Avatar";
 import { Button } from "~/components/UI/Button";
+import Link from "next/link";
 
 type PlayerFormProps = {
   setShowForm: (show: boolean) => void
@@ -81,7 +82,8 @@ function PlayerTable({ players }: PlayerTableProps) {
                 <div className="flex items-center space-x-3">
                   <Avatar src={player.user?.image} />
                   <div className="font-semibold">
-                    {player.name}
+                  <a href={`/admin/players/${player.id}`}>
+                  {player.name}</a>
                   </div>
                   <div className="text-sm opacity-50">
                     {player.user?.name}

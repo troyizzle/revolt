@@ -11,8 +11,16 @@ export const teamRouter = createTRPCRouter({
     .input(createTeamSchema)
     .mutation(async ({ input: data, ctx }) => {
       try {
+        const { players, ...rest } = data;
         return await ctx.prisma.team.create({
-          data: data
+          data: {
+            ...rest,
+            players: {
+              connect: players.map((playerId) => ({
+                id: playerId,
+              })),
+            }
+          },
         })
       } catch (e) {
         if (e instanceof Prisma.PrismaClientKnownRequestError) {

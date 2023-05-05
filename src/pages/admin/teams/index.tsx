@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { api } from "~/utils/api"
 import Layout from "~/components/UI/Layout"
-import { Team } from "@prisma/client"
+import { Player, Team } from "@prisma/client"
 import clsx from "clsx"
 import { CreateTeamInput, createTeamSchema } from "~/schema/team"
 import { Input } from "~/components/UI/Input"
@@ -17,14 +17,11 @@ function CreateTeamButton({ setCreatingTeam }: { setCreatingTeam: (creatingTeam:
 
 function CreateTeamForm({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: boolean) => void }) {
   const [error, setError] = useState<string | null>(null)
+  const players = api.player.getAllWithoutTeam.useQuery()
 
   const { register, handleSubmit, formState: { isSubmitting, errors } } = useForm<CreateTeamInput>({
-    resolver: async (data, context, options) => {
-      console.log('formData', data)
-      console.log('validation result', await createTeamSchema.safeParseAsync(data))
-      return zodResolver(createTeamSchema)(data, context, options)
-    }
-  })
+    resolver: zodResolver(createTeamSchema)
+  });
 
   const onSubmit: SubmitHandler<CreateTeamInput> = (data) => mutate(data)
 
@@ -38,6 +35,16 @@ function CreateTeamForm({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: b
   })
 
   console.log(errors)
+
+  if (!players.data) {
+    return <div>Loading</div>
+  }
+
+  function parsePlayersForSelect(players: Player[]) {
+    return players.map(player => (
+      { label: player.name, value: player.id }
+    ))
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -71,7 +78,10 @@ function CreateTeamForm({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: b
           )}
           errorMessage={errors["points"]?.message}
         />
-        <Select label='Members' options={[{label: '1', value: 1}]} />
+        <Select
+        multiple={true}
+        {...register("players")}
+        label='Members' options={parsePlayersForSelect(players.data)} />
         <div className="mt-2 flex flex-row justify-end gap-2">
           <button
             type="button"

@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { createPlayerSchema } from "~/schema/player";
 import {
   createTRPCRouter,
@@ -13,6 +14,42 @@ export const playerRouter = createTRPCRouter({
       include: {
         user: true,
       }
+    })
+  }),
+  getById: publicProcedure
+    .input(z.object({
+      id: z.string()
+    }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.player.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          user: true,
+        }
+      })
+    }),
+  getOtherPlayers: publicProcedure.input(z.object({
+    id: z.string()
+  }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.player.findMany({
+        where: {
+          id: {
+            not: input.id
+          }
+        },
+        include: {
+          user: true,
+        }
+      })
+    }),
+  getAllWithoutTeam: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.player.findMany({
+      where: {
+        teamId: null,
+      },
     })
   }),
   getAllWithScore: publicProcedure.query(({ ctx }) => {
@@ -67,5 +104,28 @@ export const playerRouter = createTRPCRouter({
           }
         }
       }
+    }),
+  linkWithAnotherPlayer: protectedProcedure
+    .input(z.object({
+      playerId: z.string(),
+      otherPlayerId: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { playerId, otherPlayerId } = input;
+
+      await ctx.prisma.playerRace.updateMany({
+        where: {
+          playerId: otherPlayerId,
+        },
+        data: {
+          playerId: playerId,
+        }
+      })
+
+      await ctx.prisma.player.delete({
+        where: {
+          id: otherPlayerId,
+        }
+      })
     }),
 })

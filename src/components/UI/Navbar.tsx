@@ -1,5 +1,5 @@
 "use client"
-import { signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Avatar from "./Avatar";
 import { AVAILABLE_THEMES, Theme, useTheme } from "~/context/ThemeContext";
 import { Session } from "next-auth";
@@ -60,7 +60,7 @@ export default function Navbar({ session }: NavbarProps) {
               <Avatar url={session?.user?.image ?? ""} />
             </div>
           </label>
-          {session && session.user ? <UserMenu /> : <>Log in</>}
+          {session && session.user ? <UserMenu /> :  <a onClick={() => void signIn()}>Sign in</a>}
         </div>
       </div>
     </div >

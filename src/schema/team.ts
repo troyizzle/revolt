@@ -7,7 +7,7 @@ export const createTeamSchema = z.object({
   points: z.number({
     required_error: "Team points is required",
   }).int().min(0).max(1000),
-  users: z.number()
+  players: z.array(z.string())
 })
 
 export type CreateTeamInput = z.infer<typeof createTeamSchema>;
