@@ -38,8 +38,18 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
+    jwt: async ({ token, user, isNewUser}) => {
+      if (user && isNewUser) {
+        await prisma.profile.create({
+          data: {
+            userId: user.id,
+          }
+        })
+      }
+      return token
+    },
     redirect: async () => {
-      return "/profile";
+      return "/profile/@me";
     },
     session: ({ session, user }) => ({
       ...session,
