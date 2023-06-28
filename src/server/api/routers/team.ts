@@ -4,6 +4,7 @@ import { createTeamSchema } from "~/schema/team";
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 
 export const teamRouter = createTRPCRouter({
@@ -33,9 +34,28 @@ export const teamRouter = createTRPCRouter({
         }
       }
     }),
-  getTeams: protectedProcedure
+  getTeamWithPlayersScore: publicProcedure
     .query(({ ctx }) => {
-      return ctx.prisma.team.findMany();
-    }
-    ),
+      return ctx.prisma.team.findMany({
+        select: {
+          id: true,
+          name: true,
+        }
+      })
+    }),
+  getTeamsWithPlayers: protectedProcedure
+    .query(({ ctx }) => {
+      return ctx.prisma.team.findMany({
+        select: {
+          id: true,
+          name: true,
+          players: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        }
+      })
+    }),
 });

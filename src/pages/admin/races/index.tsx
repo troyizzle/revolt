@@ -15,9 +15,8 @@ export default function AdminPage() {
     }
   })
 
-  function handleFileChange(event) {
+  function handleFileChange(event: any) {
     const file = event.target.files[0]
-    console.log("doing something")
     Papa.parse(file, {
       complete: function(results: ParseResult<CsvResult>) {
         //mutate(parseData(results.data))

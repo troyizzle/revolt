@@ -14,7 +14,9 @@ export const racePoints: { [key: number]: number } = {
   10: 1
 }
 
-export const BEST_LAP_POINTS = 1
+export const BEST_LAP_POINTS = 3
+export const SECOND_BEST_LAP_POINTS = 2
+export const THIRD_BEST_LAP_POINTS = 1
 
 export const tokens: { [key: number]: number } = {
   1: 1,

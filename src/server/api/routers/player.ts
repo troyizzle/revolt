@@ -69,7 +69,7 @@ export const playerRouter = createTRPCRouter({
       FROM "Player"
       LEFT JOIN (
         SELECT "Player"."id",
-          SUM("PlayerRace"."points")::integer AS "score",
+          COALESCE(SUM("PlayerRace"."points")::integer, 0) AS "score",
           COUNT("PlayerRace"."id")::integer AS "races",
           CASE
             WHEN COUNT("PlayerRace"."id") = 0 THEN 0

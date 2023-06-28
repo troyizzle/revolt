@@ -7,10 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url      = env("DATABASE_URL")
 }
 
@@ -21,12 +17,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? // @db.Text
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -42,33 +38,21 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  player        Player?
-  isAdmin       Boolean   @default(false)
-  Profile       Profile?
-}
-
-model Profile {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String   @unique
-  bio       String?
-  banner    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String    @id @default(cuid())
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
+  player          Player?
+  isAdmin         Boolean   @default(false)
 }
 
 model Player {
   id         String       @id @default(cuid())
   name       String
   uniqueName String       @unique
-  team       Team?        @relation(fields: [teamId], references: [id])
   teamId     String?
   user       User?        @relation(fields: [userId], references: [id])
   userId     String?      @unique
@@ -86,15 +70,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Team {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  players   Player[]
-  points    Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Race {
   id         String       @id @default(cuid())
   map        String
@@ -102,8 +77,6 @@ model Race {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   PlayerRace PlayerRace[]
-  event      Event?       @relation(fields: [eventId], references: [id])
-  eventId    String?      @unique
 }
 
 model PlayerRace {
@@ -127,16 +100,3 @@ model PlayerRace {
   @@unique([raceId, position])
 }
 
-model Event {
-  id            String    @id @default(cuid())
-  date          DateTime?
-  scheduledDate DateTime? @db.Date
-  track         String?
-  laps          Int?
-  ip            String?
-  serverStatus  String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  resultsUrl    String?
-  Race          Race?
-}

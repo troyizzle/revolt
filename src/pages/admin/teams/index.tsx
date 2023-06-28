@@ -1,19 +1,17 @@
 import { useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { api } from "~/utils/api"
-import Layout from "~/components/UI/Layout"
-import { Player, Team } from "@prisma/client"
+import { RouterOutputs, api } from "~/utils/api"
+import { Player } from "@prisma/client"
 import clsx from "clsx"
 import { CreateTeamInput, createTeamSchema } from "~/schema/team"
 import { Input } from "~/components/UI/Input"
 import { Select } from "~/components/UI/Select"
-
-function CreateTeamButton({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: boolean) => void }) {
-  return <button className="btn btn-primary" onClick={() => setCreatingTeam(true)}>
-    Create Team
-  </button>
-}
+import AdminContainer from "~/components/UI/Admin/Container"
+import AdminCard from "~/components/UI/Admin/Card"
+import { Button } from "~/components/UI/Button"
+import AdminTable from "~/components/UI/Admin/Table"
+import AdminFormLayout from "~/components/UI/Admin/FormLayout"
 
 function CreateTeamForm({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: boolean) => void }) {
   const [error, setError] = useState<string | null>(null)
@@ -34,8 +32,6 @@ function CreateTeamForm({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: b
     }
   })
 
-  console.log(errors)
-
   if (!players.data) {
     return <div>Loading</div>
   }
@@ -47,22 +43,8 @@ function CreateTeamForm({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: b
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-3xl font-bold text-white">Create Team</h2>
-      <hr />
+    <AdminFormLayout title="Create Team" error={error}>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-        {error &&
-          <div className="alert alert-error">
-            <div className="flex-1">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                  d="M12 4v16m8-8H4" />
-              </svg>
-              <label>{error}</label>
-            </div>
-          </div>
-        }
         <Input
           type="text"
           {...register("name")}
@@ -79,9 +61,9 @@ function CreateTeamForm({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: b
           errorMessage={errors["points"]?.message}
         />
         <Select
-        multiple={true}
-        {...register("players")}
-        label='Members' options={parsePlayersForSelect(players.data)} />
+          multiple={true}
+          {...register("players")}
+          label='Members' options={parsePlayersForSelect(players.data)} />
         <div className="mt-2 flex flex-row justify-end gap-2">
           <button
             type="button"
@@ -100,68 +82,73 @@ function CreateTeamForm({ setCreatingTeam }: { setCreatingTeam: (creatingTeam: b
           </button>
         </div>
       </form>
-    </div>
+
+    </AdminFormLayout>
   )
 }
 
 type TeamTableProps = {
-  teams: Team[] // Change this to router output
+  teams: RouterOutputs["team"]["getTeamsWithPlayers"]
 }
 
 function TeamTable({ teams }: TeamTableProps) {
   return (
-    <table className="table-auto">
-      <thead>
-        <tr>
-          <th className="px-4 py-2">Name</th>
-        </tr>
-      </thead>
-      <tbody>
+    <AdminTable>
+      <AdminTable.Head>
+        <AdminTable.HeadRow>
+          <AdminTable.HeadCell>Name</AdminTable.HeadCell>
+          <AdminTable.HeadCell>Players</AdminTable.HeadCell>
+        </AdminTable.HeadRow>
+      </AdminTable.Head>
+      <AdminTable.Body>
         {teams.map(team => (
           <tr key={team.id}>
-            <td className="px-4 py-2">{team.name}</td>
+            <AdminTable.Cell>{team.name}</AdminTable.Cell>
+            <AdminTable.Cell>{team.players.map(player => player.name).join(",")}</AdminTable.Cell>
           </tr>
         ))}
-      </tbody>
-    </table>
+      </AdminTable.Body>
+    </AdminTable>
   )
 }
 
-function TeamHeader({ setCreatingTeam }: { creatingTeam: boolean, setCreatingTeam: (creatingTeam: boolean) => void }) {
-  return (
-    <div className="flex flex-row justify-between items-center">
-      <div>Current Teams</div>
-      <div>
-        <CreateTeamButton setCreatingTeam={setCreatingTeam} />
-      </div>
-    </div>
-  )
-}
-
-type TeamShowProps = {
-  creatingTeam: boolean,
-  setCreatingTeam: (creatingTeam: boolean) => void,
-}
-
-function TeamShow({ creatingTeam, setCreatingTeam }: TeamShowProps) {
-  const data = api.team.getTeams.useQuery()
+function TeamShow() {
+  const data = api.team.getTeamsWithPlayers.useQuery()
 
   return (
     <>
-      <TeamHeader creatingTeam={creatingTeam} setCreatingTeam={setCreatingTeam} />
       {data.data ? <TeamTable teams={data.data} /> : <div>Loading..</div>}
     </>
   )
 }
 
+type CreateTeamButtonProps = {
+  creatingTeam: boolean,
+  setCreatingTeam: (creatingTeam: boolean) => void,
+}
+
+function CreateTeamButton({ creatingTeam, setCreatingTeam }: CreateTeamButtonProps) {
+  const variant = !creatingTeam ? 'primary' : 'secondary'
+
+  return <Button variant={variant} onClick={() => setCreatingTeam(!creatingTeam)}>
+    {creatingTeam ? 'Cancel' : 'Add player'}
+  </Button>
+
+}
+
 export default function AdminTeamsPage() {
   const [creatingTeam, setCreatingTeam] = useState(false)
 
-  return <Layout>
-    <div className="bg-slate-700 rounded-md px-3 py-2">
+  return <AdminContainer>
+    <AdminCard>
+      <AdminCard.Title title="Teams">
+        <CreateTeamButton creatingTeam={creatingTeam} setCreatingTeam={setCreatingTeam} />
+      </AdminCard.Title>
+    </AdminCard>
+    <AdminCard.Body>
       {creatingTeam ? <CreateTeamForm setCreatingTeam={setCreatingTeam} /> :
-        <TeamShow creatingTeam={creatingTeam} setCreatingTeam={setCreatingTeam} />
+        <TeamShow />
       }
-    </div>
-  </Layout>
+    </AdminCard.Body>
+  </AdminContainer>
 }

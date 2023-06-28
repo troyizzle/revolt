@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import AdminCard from "~/components/UI/Admin/Card";
-import Layout from "~/components/UI/Layout";
 import { CreatePlayerInput, createPlayerSchema } from "~/schema/player";
 import { RouterOutputs, api } from "~/utils/api";
 import { Input } from "~/components/UI/Input"
@@ -9,7 +8,8 @@ import clsx from "clsx";
 import { useState } from "react";
 import Avatar from "~/components/UI/Avatar";
 import { Button } from "~/components/UI/Button";
-import Link from "next/link";
+import AdminContainer from "~/components/UI/Admin/Container";
+import AdminTable from "~/components/UI/Admin/Table";
 
 type PlayerFormProps = {
   setShowForm: (show: boolean) => void
@@ -68,33 +68,31 @@ type PlayerTableProps = {
 
 function PlayerTable({ players }: PlayerTableProps) {
   return (
-    <div className="overflow-x-auto w-full">
-      <table className="table w-full">
-        <thead>
-          <tr>
-            <th>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {players.map((player) => (
-            <tr key={player.name}>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <Avatar src={player.user?.image} />
-                  <div className="font-semibold">
+    <AdminTable>
+      <AdminTable.Head>
+        <AdminTable.HeadRow>
+          <AdminTable.HeadCell>Name</AdminTable.HeadCell>
+        </AdminTable.HeadRow>
+      </AdminTable.Head>
+      <AdminTable.Body>
+        {players.map((player) => (
+          <tr key={player.name}>
+            <td>
+              <div className="flex items-center space-x-3">
+                <Avatar src={player.user?.image} />
+                <div className="font-semibold">
                   <a href={`/admin/players/${player.id}`}>
-                  {player.name}</a>
-                  </div>
-                  <div className="text-sm opacity-50">
-                    {player.user?.name}
-                  </div>
+                    {player.name}</a>
                 </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                <div className="text-sm opacity-50">
+                  {player.user?.name}
+                </div>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </AdminTable.Body>
+    </AdminTable>
   )
 }
 
@@ -119,18 +117,18 @@ export default function AdminPlayerPage() {
 
   return (
     <>
-      <Layout>
+      <AdminContainer>
         <AdminCard>
           <AdminCard.Title title="Players">
             <CreatePlayerButton showForm={showForm} setShowForm={setShowForm} />
           </AdminCard.Title>
-          <AdminCard.Body>
-            {showForm ? <PlayerForm setShowForm={setShowForm} refetch={data.refetch} /> :
-              (data.data && <PlayerTable players={data.data} />)
-            }
-          </AdminCard.Body>
         </AdminCard>
-      </Layout>
+        <AdminCard.Body>
+          {showForm ? <PlayerForm setShowForm={setShowForm} refetch={data.refetch} /> :
+            (data.data && <PlayerTable players={data.data} />)
+          }
+        </AdminCard.Body>
+      </AdminContainer>
     </>
   )
 }

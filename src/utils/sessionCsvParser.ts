@@ -8,7 +8,7 @@ export type Player = [string, string, string, string, string, string, string]
 export type CsvResult = Version | Session | Results | Header | Player
 
 export const parseCsvData = (data: CsvResult[]): addRaceResultsInput => {
-  let parsed: addRaceResultsInput = { map: '', date: '', results: [] }
+  let parsed: addRaceResultsInput = { map: '', date: '', laps: 0, results: [] }
 
   data.forEach((d) => {
     if (d[0] == 'Results') {
@@ -21,6 +21,7 @@ export const parseCsvData = (data: CsvResult[]): addRaceResultsInput => {
       const dateObject = new Date(session[1]);
       const formattedDateString = dateObject.toISOString().substring(0, 10);
       parsed.date = formattedDateString
+      parsed.laps = Number(session[4])
     }
 
 

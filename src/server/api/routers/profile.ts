@@ -9,10 +9,10 @@ export const profileRouter = createTRPCRouter({
   .input(z.object({
     userId: z.string()
   }))
-  .query(({ ctx }) => {
+  .query(({ ctx, input }) => {
     return ctx.prisma.profile.findUnique({
       where: {
-        userId: ctx.input.userId
+        userId: input.userId
       },
     });
   })

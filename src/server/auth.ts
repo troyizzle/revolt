@@ -20,15 +20,12 @@ declare module "next-auth" {
     user: {
       id: string;
       isAdmin: boolean;
-      // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    isAdmin: Boolean;
+  }
 }
 
 /**
@@ -38,26 +35,17 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    jwt: async ({ token, user, isNewUser}) => {
-      if (user && isNewUser) {
-        await prisma.profile.create({
-          data: {
-            userId: user.id,
-          }
-        })
+    session: async ({ session, user }) => {
+      console.log(user)
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          isAdmin: user.isAdmin
+        }
       }
-      return token
     },
-    redirect: async () => {
-      return "/profile/@me";
-    },
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
   },
   adapter: PrismaAdapter(prisma),
   providers: [

@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import Navbar from "~/components/UI/Navbar";
+import AdminContainer from "~/components/UI/Admin/Container";
 
 export default function AdminPage() {
   const { data: session } = useSession()
@@ -12,9 +12,11 @@ export default function AdminPage() {
     return <div>Unauthorized</div>
   }
 
-  return <>
-    <Navbar />
-    <a href="/admin/teams">Teams</a>
-    <a href="/admin/players">players</a>
-  </>
+  return (
+    <>
+      <AdminContainer>
+        <div>Admin</div>
+      </AdminContainer>
+    </>
+  )
 }
