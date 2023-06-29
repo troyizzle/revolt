@@ -1,40 +1,33 @@
+import { Half1Icon } from "@radix-ui/react-icons"
 import { type RaceCsvResults } from "~/schema/race"
 
 export const racePoints: { [key: number]: number } = {
   1: 25,
-  2: 18,
-  3: 15,
-  4: 12,
-  5: 10,
-  6: 8,
-  7: 6,
-  8: 4,
-  9: 2,
-  10: 1
+  2: 20,
+  3: 16,
+  4: 13,
+  5: 11,
+  6: 10,
+  7: 9,
+  8: 8,
+  9: 7,
+  10: 6,
+  11: 5,
+  12: 4,
+  13: 3,
+  14: 2,
+  15: 1
+}
+
+export const TOP_3_POINTS: { [key: number]: number } = {
+  1: 3,
+  2: 2,
+  3: 3
 }
 
 export const BEST_LAP_POINTS = 3
 export const SECOND_BEST_LAP_POINTS = 2
 export const THIRD_BEST_LAP_POINTS = 1
-
-export const tokens: { [key: number]: number } = {
-  1: 1,
-  2: 2,
-  3: 2,
-  4: 3,
-  5: 3,
-  6: 3,
-  7: 3,
-  8: 4,
-  9: 4,
-  10: 4,
-  11: 5,
-  12: 5,
-  13: 5,
-  14: 5,
-  15: 5,
-  16: 5,
-}
 
 
 export type Version = [string, string, string, string]

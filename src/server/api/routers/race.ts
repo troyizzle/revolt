@@ -3,7 +3,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { BEST_LAP_POINTS, SECOND_BEST_LAP_POINTS, THIRD_BEST_LAP_POINTS, racePoints } from "~/utils/importSessionData";
+import { BEST_LAP_POINTS, SECOND_BEST_LAP_POINTS, THIRD_BEST_LAP_POINTS, TOP_3_POINTS, racePoints } from "~/utils/importSessionData";
 
 
 export const raceRouter = createTRPCRouter({
@@ -28,18 +28,7 @@ export const raceRouter = createTRPCRouter({
         })
 
         let points = racePoints[result.position] || 0
-        // TODO: Change this
-        if (index === 0) {
-          points += BEST_LAP_POINTS
-        }
-
-        if (index === 1) {
-          points += SECOND_BEST_LAP_POINTS
-        }
-
-        if (index === 2) {
-          points += THIRD_BEST_LAP_POINTS
-        }
+        points += TOP_3_POINTS[result.position] || 0
 
         await ctx.prisma.playerRace.create({
           data: {
