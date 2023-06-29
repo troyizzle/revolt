@@ -2,7 +2,8 @@ import { Header } from "~/components/header";
 import { Icons } from "~/components/icons";
 import { Shell } from "~/components/shell";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import {  api } from "~/utils/api";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import { api } from "~/utils/api";
 
 export default function LeaderboardPage() {
   const raceData = api.event.allWithRaceData.useQuery()
@@ -26,8 +27,19 @@ export default function LeaderboardPage() {
               <TableRow>
                 <TableHead>Pos</TableHead>
                 <TableHead>Player</TableHead>
-                {data.eventNames.map((eventName, index) => (
-                  <TableHead key={index}>{eventName}</TableHead>
+                {data.events.map((event, index) => (
+                  <TableHead key={index}>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          {event.shortName}
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {event.name}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableHead>
                 ))}
                 <TableHead>Total</TableHead>
               </TableRow>

@@ -13,14 +13,17 @@ type PlayerRaceData = {
 
 export type RaceData = {
   players: PlayerRaceData[]
-  eventNames: string[]
+  events: {
+    name: string,
+    shortName: string,
+  }[]
 }
 
 export const eventRouter = createTRPCRouter({
   allWithRaceData: publicProcedure.query(async ({ ctx }) => {
     const data: RaceData = {
       players: [],
-      eventNames: []
+      events: []
     }
 
     const players = await ctx.prisma.player.findMany({
@@ -37,7 +40,10 @@ export const eventRouter = createTRPCRouter({
       orderBy: { order: 'asc' },
     })
 
-    data.eventNames = events.map((event) => event.shortName)
+    data.events = events.map((event) => ({
+      name: event.name,
+      shortName: event.shortName
+    }))
 
     players.forEach((player) => {
       const playerData: PlayerRaceData = {
