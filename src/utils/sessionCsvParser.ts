@@ -1,4 +1,4 @@
-import { addRaceResultsInput } from "~/schema/race"
+import { RaceCsvResults } from "~/schema/race"
 
 export type Version = [string, string, string, string]
 type Session = [string, string, string, string, string, string]
@@ -7,8 +7,8 @@ type Header = ['#', 'Player', 'Car', 'Time', 'BestLap', 'Finished', 'Cheating']
 export type Player = [string, string, string, string, string, string, string]
 export type CsvResult = Version | Session | Results | Header | Player
 
-export const parseCsvData = (data: CsvResult[]): addRaceResultsInput => {
-  let parsed: addRaceResultsInput = { map: '', date: '', laps: 0, results: [] }
+export const parseCsvData = (data: CsvResult[]): RaceCsvResults => {
+  let parsed: RaceCsvResults = { map: '', laps: 0, results: [] }
 
   data.forEach((d) => {
     if (d[0] == 'Results') {
@@ -18,9 +18,6 @@ export const parseCsvData = (data: CsvResult[]): addRaceResultsInput => {
 
     if (d[0] == 'Session') {
       const session: Session = d as Session
-      const dateObject = new Date(session[1]);
-      const formattedDateString = dateObject.toISOString().substring(0, 10);
-      parsed.date = formattedDateString
       parsed.laps = Number(session[4])
     }
 

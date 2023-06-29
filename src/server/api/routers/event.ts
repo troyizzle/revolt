@@ -1,82 +1,89 @@
-import { Prisma } from "@prisma/client";
-import { z } from "zod";
-import { createEventSchema, scheduleEventSchema, updateEventSchema } from "~/schema/event";
+import { updateEventSchema } from "~/schema/event";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 
+type PlayerRaceData = {
+  player: string
+  points: number[]
+  totalPoints: number
+}
+
+export type RaceData = {
+  players: PlayerRaceData[]
+  eventNames: string[]
+}
+
 export const eventRouter = createTRPCRouter({
-  all: publicProcedure.query(({ ctx }) => {
-    type eventAll = {
-      id: string,
-      date?: Date,
-      scheduledDate?: Date,
-      track?: string,
-      laps?: number,
-      ip?: string,
-      serverStatus: string
-      resultsUrl?: string
+  allWithRaceData: publicProcedure.query(async ({ ctx }) => {
+    const data: RaceData = {
+      players: [],
+      eventNames: []
     }
-    return ctx.prisma.$queryRaw<eventAll[]>(
-      Prisma.sql`SELECT "Event"."id",
-        "Event"."date",
-        "Event"."scheduledDate",
-        "Event"."track",
-        "Event"."laps",
-        "Event"."ip",
-        "Event"."serverStatus",
-        "Event"."resultsUrl"
-      FROM "Event"
-      ORDER BY
-        CASE WHEN "Event"."serverStatus" = 'END' THEN 1
-          WHEN "Event"."serverStatus" = 'CLOSED' THEN 2
-          ELSE 3
-        END,
-        "Event"."date" DESC,
-        "Event"."scheduledDate" ASC`
-    )
-  }),
-  schedule: protectedProcedure.input(scheduleEventSchema).mutation(
-    ({ input, ctx }) => {
-      return ctx.prisma.event.create({
-        data: {
-          scheduledDate: input.scheduledDate,
-          createdById: ctx.session.user.id,
-          serverStatus: 'CREATED',
+
+    const players = await ctx.prisma.player.findMany({
+      include: {
+        races: {
+          include: {
+            race: true
+          }
         },
-      })
-    }
-  ),
-  getNext: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.event.findFirst({
-      where: {
-        scheduledDate: {
-          gt: new Date(),
-        }
-      }
-    })
-  }),
-  get: protectedProcedure.input(z.object({ id: z.string() }))
-    .query(({ input, ctx }) => {
-      return ctx.prisma.event.findUnique({
-        where: {
-          id: input.id,
-        },
-      })
-    }
-  ),
-  update: protectedProcedure
-  .input(updateEventSchema)
-  .mutation(({ input, ctx }) => {
-    return ctx.prisma.event.update({
-      where: {
-        id: input.id,
       },
-      data: {
-        ...input
+    })
+
+    const events = await ctx.prisma.event.findMany({
+      orderBy: { order: 'asc' },
+    })
+
+    data.eventNames = events.map((event) => event.shortName)
+
+    players.forEach((player) => {
+      const playerData: PlayerRaceData = {
+        player: player.name,
+        points: [],
+        totalPoints: 0
+      }
+
+      events.forEach((event) => {
+        const raceEvent = player.races.find((race) => race.race.eventId === event.id)
+        if (!raceEvent) {
+          playerData.points.push(0)
+        } else {
+          playerData.points.push(raceEvent.points)
+          playerData.totalPoints += raceEvent.points
+        }
+      })
+
+      data.players.push(playerData)
+    })
+
+    data.players =  data.players.sort((a, b) => {
+      if (a.totalPoints > b.totalPoints) {
+        return -1
+      } else if (a.totalPoints < b.totalPoints) {
+        return 1
+      } else {
+        return 0
       }
     })
-  })
+
+    return data
+  }),
+  all: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.event.findMany({
+      orderBy: { order: 'asc' }
+    })
+  }),
+  update: protectedProcedure.input(updateEventSchema)
+    .mutation(async ({ ctx, input }) => {
+      const event = await ctx.prisma.event.update({
+        where: { id: input.id },
+        data: { name: input.name, shortName: input.shortName }
+      })
+
+      return event
+    }
+    ),
 })

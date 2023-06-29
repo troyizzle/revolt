@@ -1,17 +1,17 @@
-import { addRaceResultsSchema } from "~/schema/race";
+import { addRaceResultsInput } from "~/schema/race";
 import {
   createTRPCRouter,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { BEST_LAP_POINTS, SECOND_BEST_LAP_POINTS, THIRD_BEST_LAP_POINTS, racePoints, tokens } from "~/utils/importSessionData";
+import { BEST_LAP_POINTS, SECOND_BEST_LAP_POINTS, THIRD_BEST_LAP_POINTS, racePoints } from "~/utils/importSessionData";
 
 
 export const raceRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(addRaceResultsSchema)
+    .input(addRaceResultsInput)
     .mutation(async ({ ctx, input }) => {
       const race = await ctx.prisma.race.create({
-        data: { map: input.map, laps: input.laps }
+        data: { map: input.map, laps: input.laps, eventId: input.eventId }
       })
 
       input.results.forEach(async (result, index) => {
@@ -44,7 +44,6 @@ export const raceRouter = createTRPCRouter({
         await ctx.prisma.playerRace.create({
           data: {
             points: points,
-            tokens: tokens[result.position] || 5,
             raceId: race.id,
             playerId: player.id,
             ...rest
