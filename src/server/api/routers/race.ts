@@ -3,7 +3,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { BEST_LAP_POINTS, SECOND_BEST_LAP_POINTS, THIRD_BEST_LAP_POINTS, TOP_3_POINTS, racePoints } from "~/utils/importSessionData";
+import { TOP_3_POINTS, racePoints } from "~/utils/importSessionData";
 
 
 export const raceRouter = createTRPCRouter({
@@ -14,7 +14,13 @@ export const raceRouter = createTRPCRouter({
         data: { map: input.map, laps: input.laps, eventId: input.eventId }
       })
 
-      input.results.map(async (result, index) => {
+      const resultsSortedByBestLap = input.results.sort((a, b) => {
+        if (a.bestLap < b.bestLap) return -1
+        if (a.bestLap > b.bestLap) return 1
+        return 0
+      })
+
+      resultsSortedByBestLap.map(async (result, index) => {
         const { player: playerName, ...rest } = result
         const player = await ctx.prisma.player.upsert({
           where: {
@@ -28,7 +34,7 @@ export const raceRouter = createTRPCRouter({
         })
 
         let points = racePoints[result.position] || 0
-        points += TOP_3_POINTS[result.position] || 0
+        points += TOP_3_POINTS[index + 1] || 0
 
         await ctx.prisma.playerRace.create({
           data: {
