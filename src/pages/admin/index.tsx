@@ -6,23 +6,25 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import { UpdateEventInput, updateEventSchema } from "~/schema/event";
+import { type UpdateEventInput, updateEventSchema } from "~/schema/event";
 import { api } from "~/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link";
 import { toast } from "sonner";
+import { type Event } from "@prisma/client";
+import { type FormEvent } from "react";
 
 type EventFormProps = {
-  event: any
+  event: Event
   children: React.ReactNode
 }
 
 function EventForm({ event, children }: EventFormProps) {
   const ctx = api.useContext()
   const { mutate } = api.event.update.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Event updated')
-      ctx.event.all.invalidate()
+      await ctx.event.all.invalidate()
     },
     onError: (error) => {
       console.error(error)
@@ -40,9 +42,16 @@ function EventForm({ event, children }: EventFormProps) {
     mutate(data)
   }
 
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    await form.handleSubmit(onSubmit)(event);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={(event) => {
+        event.preventDefault();
+        void handleFormSubmit(event);
+      }}>
         <FormField
           control={form.control}
           name="name"
@@ -112,7 +121,7 @@ export default function AdminPage() {
         </TableHeader>
         <TableBody>
           {events.data.map((event) => (
-            <TableRow>
+            <TableRow key={event.id}>
               <TableCell>{event.name}</TableCell>
               <TableCell>{event.shortName}</TableCell>
               <TableCell>{event.order}</TableCell>

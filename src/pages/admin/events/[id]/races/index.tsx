@@ -1,34 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/router"
-import Papa, { ParseResult } from "papaparse"
-import { useState } from "react"
+import Papa, { type ParseResult } from "papaparse"
+import { type FormEvent, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { Button } from "~/components/ui/button"
 import { Card } from "~/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
-import { AddRaceResultsInput, addRaceResultsInput } from "~/schema/race"
+import { type AddRaceResultsInput, addRaceResultsInput } from "~/schema/race"
 import { api } from "~/utils/api"
-import { CsvResult, parseCsvData } from "~/utils/importSessionData"
+import { type CsvResult, parseCsvData } from "~/utils/importSessionData"
 
 export default function EventRacePage() {
+  const [loadedCsv, setLoadedCsv] = useState<csvState>('idle')
   const router = useRouter()
   const eventId = router.query.id as string;
-  if (!eventId) return null
-
-  type csvState = 'idle' | 'loading' | 'loaded' | 'error'
-  const [loadedCsv, setLoadedCsv] = useState<csvState>('idle')
-
-  const { mutate } = api.race.create.useMutation({
-    onSuccess: () => {
-      router.push("/admin")
-      toast.success('Race linked to event')
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    }
-  })
 
   const form = useForm<AddRaceResultsInput>({
     resolver: zodResolver(addRaceResultsInput),
@@ -37,14 +24,35 @@ export default function EventRacePage() {
     }
   })
 
+  if (!eventId) return null
+
+  type csvState = 'idle' | 'loading' | 'loaded' | 'error'
+
+  const { mutate } = api.race.create.useMutation({
+    onSuccess: async () => {
+      await router.push("/admin")
+      toast.success('Race linked to event')
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    }
+  })
+
   function onSubmit(data: AddRaceResultsInput) {
     mutate(data)
   }
 
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    await form.handleSubmit(onSubmit)(event);
+  };
+
   return (
     <div className="container mx-auto">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={(event) => {
+          event.preventDefault();
+          void handleFormSubmit(event);
+        }}>
           <Input type="hidden" value={eventId} {...form.register('eventId')} />
           <FormField
             control={form.control}

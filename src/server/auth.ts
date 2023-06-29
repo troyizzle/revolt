@@ -24,7 +24,7 @@ declare module "next-auth" {
   }
 
   interface User {
-    isAdmin: Boolean;
+    isAdmin: boolean;
   }
 }
 
@@ -35,8 +35,7 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: async ({ session, user }) => {
-      console.log(user)
+    session: ({ session, user }) => {
       return {
         ...session,
         user: {

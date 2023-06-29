@@ -14,7 +14,7 @@ export const raceRouter = createTRPCRouter({
         data: { map: input.map, laps: input.laps, eventId: input.eventId }
       })
 
-      input.results.forEach(async (result, index) => {
+      input.results.map(async (result, index) => {
         const { player: playerName, ...rest } = result
         const player = await ctx.prisma.player.upsert({
           where: {

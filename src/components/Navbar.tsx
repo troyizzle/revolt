@@ -77,7 +77,7 @@ export default function Navbar() {
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem asChild>
-                      <Button className="w-full" variant="ghost" onClick={() => signOut()}>
+                      <Button className="w-full" variant="ghost" onClick={() => void signOut()}>
                         <Icons.logout
                           className="mr-2 h-4 w-4"
                           aria-hidden="true"
@@ -91,7 +91,7 @@ export default function Navbar() {
             ) : (
               <Button
                 variant="default"
-                onClick={() => signIn()}
+                onClick={() => void signIn()}
               >
                 Sign In
               </Button>
