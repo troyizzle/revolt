@@ -70,6 +70,13 @@ const Home: NextPage = () => {
       <Head>
         <title>Revolt</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta property="og:title" content="website" />
+        <meta
+          property="og:url"
+          content=""
+          />
+          <meta property="og:description" content="Revolt season is a community of people who love to play games together." />
+          <meta property="og:image" content="/images/revolt-default.jpg" />
       </Head>
       <main>
         <Hero />
