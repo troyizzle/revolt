@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Header } from "~/components/header";
 import { Icons } from "~/components/icons";
 import { Shell } from "~/components/shell";
@@ -32,7 +33,9 @@ export default function LeaderboardPage() {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          {event.shortName}
+                          <Link href={`/events/${event.id}`}>
+                            {event.shortName}
+                          </Link>
                         </TooltipTrigger>
                         <TooltipContent>
                           {event.name}

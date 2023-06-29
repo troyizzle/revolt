@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { updateEventSchema } from "~/schema/event";
 import {
   createTRPCRouter,
@@ -15,11 +16,35 @@ export type RaceData = {
   players: PlayerRaceData[]
   events: {
     name: string,
-    shortName: string,
+    shortName: string
+    id: string
   }[]
 }
 
 export const eventRouter = createTRPCRouter({
+  get: publicProcedure
+    .input(z.object({
+      id: z.string()
+    }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.event.findUnique({
+        include: {
+          Race: {
+            include: {
+              PlayerRace: {
+                include: {
+                  player: true
+                },
+                orderBy: {
+                  position: 'asc'
+                }
+              }
+            }
+          }
+        },
+        where: { id: input.id },
+      })
+    }),
   allWithRaceData: publicProcedure.query(async ({ ctx }) => {
     const data: RaceData = {
       players: [],
@@ -42,7 +67,8 @@ export const eventRouter = createTRPCRouter({
 
     data.events = events.map((event) => ({
       name: event.name,
-      shortName: event.shortName
+      shortName: event.shortName,
+      id: event.id
     }))
 
     players.forEach((player) => {
@@ -65,7 +91,7 @@ export const eventRouter = createTRPCRouter({
       data.players.push(playerData)
     })
 
-    data.players =  data.players.sort((a, b) => {
+    data.players = data.players.sort((a, b) => {
       if (a.totalPoints > b.totalPoints) {
         return -1
       } else if (a.totalPoints < b.totalPoints) {

@@ -88,20 +88,23 @@ model Race {
 }
 
 model PlayerRace {
-  id        String   @id @default(cuid())
-  player    Player   @relation(fields: [playerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  race      Race     @relation(fields: [raceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  playerId  String
-  raceId    String
-  position  Int
-  points    Int
-  car       String
-  time      String
-  bestLap   String
-  finished  Boolean
-  cheating  Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  player     Player   @relation(fields: [playerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  race       Race     @relation(fields: [raceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  playerId   String
+  raceId     String
+  position   Int
+  gap        String?
+  interval   String?
+  averageLap String
+  points     Int
+  car        String
+  time       String
+  bestLap    String
+  finished   Boolean
+  cheating   Boolean
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([playerId, raceId])
   @@unique([raceId, position])

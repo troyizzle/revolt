@@ -18,10 +18,14 @@ function Hero() {
   const heroImages = [
     {
       title: "Hero Image One",
-      src: "/images/RVCCoverlay.png",
+      src: "/images/hero-image1.png",
     },
     {
       title: "Hero Iamge Two",
+      src: "/images/RVCCoverlay.png",
+    },
+    {
+      title: "Hero Image Three",
       src: "/images/revolt-default.jpg",
     }
   ]
@@ -40,7 +44,7 @@ function Hero() {
       <AspectRatio ratio={16 / 9}>
         <div className="absolute inset-0 z-10 bg-black/60" />
         <Image
-          src={heroImages[currentImage]?.src ?? "/images/RVCCoverlay.png"}
+          src={heroImages[currentImage]?.src ?? "/images/hero-image1.png"}
           alt={heroImages[currentImage]?.title ?? "Hero Image One"}
           fill
           className="object-cover"
@@ -76,26 +80,31 @@ const Home: NextPage = () => {
         <meta
           property="og:url"
           content=""
-          />
-          <meta property="og:description" content="Revolt season is a community of people who love to play games together." />
-          <meta property="og:image" content="/images/revolt-default.jpg" />
+        />
+        <meta property="og:description" content="Revolt season is a community of people who love to play games together." />
+        <meta property="og:image" content="/images/revolt-default.jpg" />
       </Head>
       <main>
         <Hero />
         <Shell>
           <Header
             className="place-items-center text-center"
-            title="Rev-Volt Endurance Championship Season 4: Total Standings"
-            description="Revolt season is a community of people who love to play games together."
+            title="Re-Volt Endurance Championship Season 4: Total Standings"
+            description="Revolt is a community of people who love to play games together."
           />
           <div className="space-y-5">
             <Card className="w-full block md:flex mt-4 px-6 py-20">
               <div className="sm:w-full md:w-1/2 lg:w-3/4 grow">
-                <h2 className="text-2xl font-medium">Live Streams</h2>
-                <p className="py-6">This season is live broadcast striaght on <Link
-                  className="text-blue-500 hover:text-blue-600"
-                  target="_blank"
-                  href="https://www.twitch.tv/revoltunited">twitch</Link> to millions on people and commentated by a revolt legend.</p>
+                <Image
+                  src="/images/championship.png"
+                  alt="Revolt Championship"
+                  width={500}
+                  height={500}
+                  className="object-cover"
+                />
+              </div>
+              <div className="ml-3">
+                <h2 className="text-2xl font-medium">Endurance Championship</h2>
                 <p>If you would like to participate in this season please reach out to utqiagvik on Discord</p>
                 <p className="mb-2">Click here to see the current leaderboard for this season.</p>
                 <Link
@@ -109,9 +118,30 @@ const Home: NextPage = () => {
                 >
                   Leaderboard
                 </Link>
-
               </div>
-              <div className="">
+            </Card>
+
+            <Card className="w-full block md:flex mt-4 px-6 py-20">
+              <div className="ml-3">
+                <h2 className="text-2xl font-medium mb-1">Rules</h2>
+                <p>You are awarded points based on your position finished and the top 3 best laps get extra points.</p>
+                <p>Have the best lap time will result in 3 extra points, second best lap will result in 2 extra points and third best lap time will result in one extra point.</p>
+              </div>
+
+              <div className="ml-2 sm:w-full md:w-1/2 lg:w-3/4 grow">
+                <Image
+                  src="/images/rules.png"
+                  alt="Revolt Rules"
+                  width={500}
+                  height={500}
+                  className="object-cover"
+                />
+              </div>
+            </Card>
+
+
+            <Card className="w-full block md:flex mt-4 px-6 py-20">
+              <div className="sm:w-full md:w-1/2 lg:w-3/4 grow">
                 <Image
                   src="/images/revolt-stream.png"
                   alt="Revolt Stream"
@@ -119,6 +149,14 @@ const Home: NextPage = () => {
                   height={500}
                   className="object-cover"
                 />
+              </div>
+              <div className="ml-2">
+                <h2 className="text-2xl font-medium">Live Streams</h2>
+                <p className="py-6">This season is live broadcast striaght on <Link
+                  className="text-blue-500 hover:text-blue-600"
+                  target="_blank"
+                  href="https://www.twitch.tv/revoltunited">twitch</Link> to millions on people and commentated by a revolt legend.</p>
+                <p className="mb-2">Click here to see the current leaderboard for this season.</p>
               </div>
             </Card>
           </div>

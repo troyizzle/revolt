@@ -23,22 +23,24 @@ function UserDropdownMenu({ user }: UserDropdownMenuProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">
         <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         {user.isAdmin && (
-          <DropdownMenuItem asChild>
-            <Link href="/admin">
-              <Icons.user
-                className="mr-2 h-4 w-4"
-                aria-hidden="true"
-              />
-              Admin
-            </Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/admin">
+                <Icons.user
+                  className="mr-2 h-4 w-4"
+                  aria-hidden="true"
+                />
+                Admin
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
         )}
-        <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild className="w-full">
-          <Button className="" variant="ghost"  onClick={() => void signOut()}>
+          <Button className="" variant="ghost" onClick={() => void signOut()}>
             <Icons.logout
               className="mr-2 h-4 w-4"
               aria-hidden="true"
