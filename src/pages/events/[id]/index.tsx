@@ -15,7 +15,7 @@ export default function EventShowPage() {
       <>
         <Header
           className="my-8 text-center"
-          title={`${event.data.name} Endurance: ${event.data.Race[0]?.laps} laps`}
+          title={`${event.data.name} Endurance: ${event.data.Race[0]?.laps ?? 0} laps`}
         />
         <Table>
           <TableHeader>

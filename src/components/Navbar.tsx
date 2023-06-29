@@ -2,10 +2,10 @@ import { useTheme } from "next-themes";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Icons } from "./icons";
 import { Avatar, AvatarImage } from "./ui/avatar";
-import { User } from "next-auth";
+import { type User } from "next-auth";
 
 type UserDropdownMenuProps = {
   user: User
