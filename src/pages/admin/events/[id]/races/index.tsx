@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { GetServerSideProps, InferGetServerSidePropsType } from "next"
-import { User, getServerSession } from "next-auth"
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next"
+import { type User, getServerSession } from "next-auth"
 import { useRouter } from "next/router"
 import Papa, { type ParseResult } from "papaparse"
 import { type FormEvent, useState } from "react"

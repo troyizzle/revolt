@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Icons } from "~/components/icons";
 import { Button } from "~/components/ui/button";
