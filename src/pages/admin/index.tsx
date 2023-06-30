@@ -13,6 +13,9 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { type Event } from "@prisma/client";
 import { type FormEvent } from "react";
+import { authOptions } from "~/server/auth";
+import { User, getServerSession } from "next-auth";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 type EventFormProps = {
   event: Event
@@ -91,17 +94,8 @@ function EventForm({ event, children }: EventFormProps) {
   )
 }
 
-export default function AdminPage() {
-  const { data: session } = useSession()
+export default function AdminPage({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const events = api.event.all.useQuery()
-
-  if (!session) {
-    return <div>loading...</div>
-  }
-
-  if (!session.user.isAdmin) {
-    return <div>Unauthorized</div>
-  }
 
   if (!events.data) {
     return <div>loading...</div>
@@ -158,4 +152,23 @@ export default function AdminPage() {
       </Table>
     </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<{ user: User }> = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions)
+
+  if (!session || !session.user.isAdmin) {
+    return {
+      redirect: {
+        destination: '/?errorMessage=You are not an admin',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      user: session.user
+    },
+  }
 }

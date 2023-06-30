@@ -2,7 +2,9 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Header } from "~/components/header";
 import { Shell } from "~/components/shell";
 import { AspectRatio } from "~/components/ui/aspect-ratio";
@@ -69,6 +71,14 @@ function Hero() {
 }
 
 const Home: NextPage = () => {
+  const router = useRouter()
+  const errorMessage = router.query.errorMessage as string
+
+  useEffect(() => {
+    if (!errorMessage) return
+    toast.error(errorMessage)
+  }, [errorMessage])
+
   return (
     <>
       <Head>
