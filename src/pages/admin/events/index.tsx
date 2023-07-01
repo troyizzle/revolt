@@ -1,21 +1,21 @@
-import { useForm } from "react-hook-form";
-import { Icons } from "~/components/icons";
-import { Button } from "~/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import { type UpdateEventInput, updateEventSchema } from "~/schema/event";
-import { api } from "~/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod"
-import Link from "next/link";
-import { toast } from "sonner";
-import { type Event } from "@prisma/client";
-import { type FormEvent } from "react";
-import { authOptions } from "~/server/auth";
-import { User, getServerSession } from "next-auth";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import AdminLayout from "~/components/admin-layout";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next"
+import { type User, getServerSession } from "next-auth"
+import Link from "next/link"
+import { type FormEvent } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import AdminLayout from "~/components/admin-layout"
+import { Icons } from "~/components/icons"
+import { Button } from "~/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
+import { Input } from "~/components/ui/input"
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table"
+import { type UpdateEventInput, updateEventSchema } from "~/schema/event"
+import { authOptions } from "~/server/auth"
+import { api } from "~/utils/api"
+import { type Event } from "@prisma/client"
 
 type EventFormProps = {
   event: Event

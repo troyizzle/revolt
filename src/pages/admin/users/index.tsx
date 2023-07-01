@@ -1,7 +1,7 @@
 import AdminLayout from "~/components/admin-layout";
+import { columns } from "~/components/admin/users/table/columns";
+import DataTable from "~/components/admin/users/table/data-table";
 import { api } from "~/utils/api";
-import { DataTable } from "./table/data-table";
-import { columns } from "./table/columns";
 
 export default function AdminMembersIndexPage() {
   const users = api.user.getAll.useQuery()
