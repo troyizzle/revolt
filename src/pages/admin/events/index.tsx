@@ -15,6 +15,7 @@ import { type FormEvent } from "react";
 import { authOptions } from "~/server/auth";
 import { User, getServerSession } from "next-auth";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import AdminLayout from "~/components/admin-layout";
 
 type EventFormProps = {
   event: Event
@@ -101,7 +102,7 @@ export default function AdminPage({ user }: InferGetServerSidePropsType<typeof g
   }
 
   return (
-    <div className="mx-auto container">
+    <AdminLayout>
       <Table>
         <TableCaption>All events</TableCaption>
         <TableHeader>
@@ -149,7 +150,7 @@ export default function AdminPage({ user }: InferGetServerSidePropsType<typeof g
           ))}
         </TableBody>
       </Table>
-    </div>
+    </AdminLayout>
   )
 }
 
