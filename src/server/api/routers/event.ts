@@ -118,9 +118,10 @@ export const eventRouter = createTRPCRouter({
     }),
   update: protectedProcedure.input(updateEventSchema)
     .mutation(async ({ ctx, input }) => {
+      const { id, ...data} = input
       const event = await ctx.prisma.event.update({
-        where: { id: input.id },
-        data: { name: input.name, shortName: input.shortName }
+        where: { id },
+        data
       })
 
       return event
