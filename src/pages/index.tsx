@@ -98,7 +98,7 @@ const Home: NextPage = () => {
           <Header
             className="place-items-center text-center"
             title="Re-Volt Endurance Championship Season 4: Total Standings"
-            description="Revolt is a community of people who love to play games together."
+            description="The RVEC is the premier event of the year for hardcore Endurance enthusiasts."
           />
           <div className="space-y-5">
             <Card className="w-full block md:flex mt-4 px-6 py-20">
@@ -113,7 +113,7 @@ const Home: NextPage = () => {
               </div>
               <div className="ml-3">
                 <h2 className="text-2xl font-medium">Endurance Championship</h2>
-                <p>If you would like to participate in this season please reach out to utqiagvik on Discord</p>
+                <p>If you would like to participate in this season please reach out to frosttbitten on Discord</p>
                 <p className="mb-2">Click here to see the current leaderboard for this season.</p>
                 <Link
                   aria-label="Leaderboard"
@@ -132,8 +132,8 @@ const Home: NextPage = () => {
             <Card className="w-full block md:flex mt-4 px-6 py-20">
               <div className="ml-3">
                 <h2 className="text-2xl font-medium mb-1">Rules</h2>
-                <p>You are awarded points based on your position finished and the top 3 best laps get extra points.</p>
-                <p>Have the best lap time will result in 3 extra points, second best lap will result in 2 extra points and third best lap time will result in one extra point.</p>
+                <p>RVEC uses the Moto GP points system, detailed by the graphic on the right.</p>
+                <p>Additionally, racers are awarded for having the Best Lap in the race. Overall Best Lap earns 3 extra points, 2nd Best earns 2, and 3rd Best scores 1 extra point.</p>
               </div>
 
               <div className="ml-2 sm:w-full md:w-1/2 lg:w-3/4 grow">
@@ -160,11 +160,10 @@ const Home: NextPage = () => {
               </div>
               <div className="ml-2">
                 <h2 className="text-2xl font-medium">Live Streams</h2>
-                <p className="py-6">This season is live broadcast striaght on <Link
+                <p className="py-6">his season is live broadcasted right on <Link
                   className="text-blue-500 hover:text-blue-600"
                   target="_blank"
-                  href="https://www.twitch.tv/revoltunited">twitch</Link> to millions on people and commentated by a revolt legend.</p>
-                <p className="mb-2">Click here to see the current leaderboard for this season.</p>
+                  href="https://www.twitch.tv/revoltunited">Twitch</Link> to Re-Volt's competitive community every Sunday starting at around 18:45 UTC, with the official race beginning around 19:30 UTC. It is commentated by Re-Volt's shoutcasting regular, Honk (utqiagvik on Discord).</p>
               </div>
             </Card>
           </div>
