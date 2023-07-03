@@ -1,41 +1,41 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { GetServerSideProps, InferGetServerSidePropsType } from "next"
+import { format } from "date-fns"
+import { type GetServerSideProps } from "next"
 import { type User, getServerSession } from "next-auth"
+import { useState } from "react"
 import { type UseFormReturn, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import AdminLayout from "~/components/admin-layout"
+import AdminNewModal from "~/components/admin/modal/new"
+import { columns } from "~/components/admin/seasons/table/columns"
+import DataTable from "~/components/admin/table/data-table"
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
-import { type CreateEventInput, createEventSchema } from "~/schema/event"
-import { authOptions } from "~/server/auth"
-import { api } from "~/utils/api"
-import DataTable from "~/components/admin/table/data-table"
-import { columns } from "~/components/admin/events/table/columns"
-import AdminNewModal from "~/components/admin/modal/new"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
-import { useState } from "react"
+import { type CreateSeasonSchema, createSeasonSchema } from "~/schema/season"
+import { authOptions } from "~/server/auth"
+import { type RouterOutputs, api } from "~/utils/api"
 
-type EventFormProps = {
-  form: UseFormReturn<CreateEventInput>
+type SeasonFormProps = {
+  form: UseFormReturn<CreateSeasonSchema>
 }
 
-function EventForm({ form }: EventFormProps) {
+function SeasonForm({ form }: SeasonFormProps) {
   const [open, setIsOpen] = useState(false)
   const ctx = api.useContext()
-  const seasons = api.season.getAll.useQuery()
+  const league = api.league.getAll.useQuery()
 
-  const { mutate } = api.event.create.useMutation({
+  const { mutate } = api.season.create.useMutation({
     onSuccess: async () => {
-      toast.success('Event created')
-      await ctx.event.getAll.invalidate()
-      setIsOpen(false)
+      toast.success('Season created')
+      await ctx.season.getAll.invalidate()
     },
     onError: (error) => {
-      console.error(error)
-    },
+      toast.error(error.message)
+    }
   })
 
-  function onSubmit(data: CreateEventInput) {
+  function onSubmit(data: CreateSeasonSchema) {
     mutate(data)
   }
 
@@ -43,17 +43,17 @@ function EventForm({ form }: EventFormProps) {
     <AdminNewModal
       form={form}
       onSubmit={onSubmit}
-      modalTitle="Create Event"
-      modalDescription="Create a new event"
+      modalTitle="Create Season"
+      modalDescription="Create a new season."
       open={open}
       setIsOpen={setIsOpen}
     >
       <FormField
         control={form.control}
-        name="seasonId"
+        name="leagueId"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Season</FormLabel>
+            <FormLabel>League</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -61,7 +61,7 @@ function EventForm({ form }: EventFormProps) {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {seasons.data?.map((league) => (
+                {league.data?.map((league) => (
                   <SelectItem key={league.id} value={league.id}>
                     {league.name}
                   </SelectItem>
@@ -69,12 +69,13 @@ function EventForm({ form }: EventFormProps) {
               </SelectContent>
             </Select>
             <FormDescription>
-              The league this season is associated with.
+              This is the league it belongs too.
             </FormDescription>
             <FormMessage />
           </FormItem>
         )}
       />
+
       <FormField
         control={form.control}
         name="name"
@@ -82,10 +83,10 @@ function EventForm({ form }: EventFormProps) {
           <FormItem>
             <FormLabel>Name</FormLabel>
             <FormControl>
-              <Input placeholder="name" {...field} />
+              <Input placeholder="name" type="text" {...field} />
             </FormControl>
             <FormDescription>
-              The name of the event
+              This will be the display name for the season
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -94,38 +95,42 @@ function EventForm({ form }: EventFormProps) {
 
       <FormField
         control={form.control}
-        name="shortName"
+        name="startDate"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Short Name</FormLabel>
-            <FormControl>
-              <Input placeholder="short name" {...field} />
-            </FormControl>
-            <FormDescription>
-              This shortname will be used in the table results.
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name="order"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Order</FormLabel>
-            <FormControl>
-              <Input
-              type="number"
-              placeholder="order" {...field}
-              onChange={(e) => {
-                field.onChange(parseInt(e.target.value))
+          <FormItem className="flex flex-col">
+            <FormLabel>Start Date</FormLabel>
+            <Input
+              type="date"
+              {...field}
+              value={field.value ? format(new Date(field.value), 'yyyy-MM-dd') : ''}
+              onChange={(event) => {
+                field.onChange(new Date(event.target.value))
               }}
-              />
-            </FormControl>
+            />
             <FormDescription>
-              The order of the event in the season.
+              This season start date.
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="endDate"
+        render={({ field }) => (
+          <FormItem className="flex flex-col">
+            <FormLabel>End Date</FormLabel>
+            <Input
+              type="date"
+              {...field}
+              value={field.value ? format(new Date(field.value), 'yyyy-MM-dd') : ''}
+              onChange={(event) => {
+                field.onChange(new Date(event.target.value))
+              }}
+            />
+            <FormDescription>
+              This is the season End Date, this can be set later if unknown.
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -136,19 +141,21 @@ function EventForm({ form }: EventFormProps) {
   )
 }
 
-export default function AdminPage({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const events = api.event.getAll.useQuery()
+export type SeasonWithLeague = RouterOutputs["season"]["getAll"]
 
-  const form = useForm<CreateEventInput>({
-    resolver: zodResolver(createEventSchema)
+export default function AdminSeasonsPage() {
+  const seasons = api.season.getAll.useQuery()
+
+  const form = useForm<CreateSeasonSchema>({
+    resolver: zodResolver(createSeasonSchema)
   })
 
   return (
     <AdminLayout
-      title="Events"
-      createForm={<EventForm form={form} />}
+      title="Seasons"
+      createForm={<SeasonForm form={form} />}
     >
-      <DataTable columns={columns} data={events.data ?? []} />
+      <DataTable columns={columns} data={seasons.data ?? []} />
     </AdminLayout>
   )
 }

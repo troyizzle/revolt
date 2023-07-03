@@ -68,12 +68,30 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model League {
+  id     String   @id @default(cuid())
+  name   String  @unique
+  Season Season[]
+}
+
+model Season {
+  id        String   @id @default(cuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime?
+  League    League   @relation(fields: [leagueId], references: [id])
+  leagueId  String
+  events    Event[]
+}
+
 model Event {
-  id        String @id @default(cuid())
+  id        String  @id @default(cuid())
   name      String
   shortName String
   order     Int
-  Race      Race[]
+  races     Race[]
+  Season    Season? @relation(fields: [seasonId], references: [id])
+  seasonId  String?
 }
 
 model Race {
@@ -83,7 +101,7 @@ model Race {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   PlayerRace PlayerRace[]
-  Event      Event        @relation(fields: [eventId], references: [id])
+  event      Event        @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   eventId    String
 }
 

@@ -15,7 +15,7 @@ export default function EventShowPage() {
       <>
         <Header
           className="my-8 text-center"
-          title={`${event.data.name} Endurance: ${event.data.Race[0]?.laps ?? 0} laps`}
+          title={`${event.data.name} Endurance: ${event.data.races[0]?.laps ?? 0} laps`}
         />
         <Table>
           <TableHeader>
@@ -32,7 +32,7 @@ export default function EventShowPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {event.data?.Race[0]?.PlayerRace?.map((playerRace) => (
+            {event.data?.races[0]?.PlayerRace?.map((playerRace) => (
               <TableRow key={playerRace.id}>
                 <TableHead>{playerRace.position}</TableHead>
                 <TableHead>{playerRace.player.name}</TableHead>

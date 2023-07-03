@@ -33,7 +33,7 @@ export default function EventRacePage({ user }: InferGetServerSidePropsType<type
 
     const { mutate } = api.race.create.useMutation({
       onSuccess: async () => {
-        await router.push("/admin")
+        await router.push("/admin/events")
         toast.success('Race linked to event')
       },
       onError: (error) => {

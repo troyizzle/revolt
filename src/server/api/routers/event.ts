@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { updateEventSchema } from "~/schema/event";
+import { createEventSchema, updateEventSchema } from "~/schema/event";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -29,7 +29,7 @@ export const eventRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return await ctx.prisma.event.findUnique({
         include: {
-          Race: {
+          races: {
             include: {
               PlayerRace: {
                 include: {
@@ -103,11 +103,19 @@ export const eventRouter = createTRPCRouter({
 
     return data
   }),
-  all: publicProcedure.query(({ ctx }) => {
+  getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.event.findMany({
       orderBy: { order: 'asc' }
     })
   }),
+  create: protectedProcedure.input(createEventSchema)
+    .mutation(async ({ ctx, input: data }) => {
+      const event = await ctx.prisma.event.create({
+        data
+      })
+
+      return event
+    }),
   update: protectedProcedure.input(updateEventSchema)
     .mutation(async ({ ctx, input }) => {
       const event = await ctx.prisma.event.update({
