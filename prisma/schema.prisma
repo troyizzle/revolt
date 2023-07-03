@@ -90,8 +90,8 @@ model Event {
   shortName String
   order     Int
   races     Race[]
-  Season    Season? @relation(fields: [seasonId], references: [id])
-  seasonId  String?
+  Season    Season @relation(fields: [seasonId], references: [id])
+  seasonId  String
 }
 
 model Race {
