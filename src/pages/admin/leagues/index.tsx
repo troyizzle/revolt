@@ -26,6 +26,7 @@ function LeagueForm({ form }: LeagueFormProps) {
     onSuccess: async () => {
       toast.success('League created')
       await ctx.league.getAll.invalidate()
+      setIsOpen(false)
     },
     onError: (error) => {
       toast.error(error.message)

@@ -29,6 +29,7 @@ function SeasonForm({ form }: SeasonFormProps) {
     onSuccess: async () => {
       toast.success('Season created')
       await ctx.season.getAll.invalidate()
+      setIsOpen(false)
     },
     onError: (error) => {
       toast.error(error.message)
