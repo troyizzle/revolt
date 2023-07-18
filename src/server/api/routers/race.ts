@@ -8,8 +8,8 @@ import { TOP_3_POINTS, racePoints } from "~/utils/importSessionData";
 function calculateTimeDifference(time1: string, time2: string) {
   const [minutes1, seconds1, milliseconds1] = time1.split(':').map(Number);
   const [minutes2, seconds2, milliseconds2] = time2.split(':').map(Number);
-  if (!minutes1 || !minutes2 || !seconds1 || !seconds2 || !milliseconds1 || !milliseconds2) {
-    throw Error("Invalid time format")
+  if (minutes1 === undefined || minutes2 === undefined || seconds1 === undefined || seconds2 === undefined || milliseconds1 === undefined || milliseconds2 === undefined) {
+    throw Error(`Invalid time format for ${time1} or ${time2}`)
   }
 
   const time1Millis = minutes1 * 60000 + seconds1 * 1000 + milliseconds1;
@@ -30,7 +30,7 @@ function calculateTimeDifference(time1: string, time2: string) {
 function calculateAverageTime(totalTime: string, laps: number) {
   const [minutes, seconds, milliseconds] = totalTime.split(':').map(Number);
   if (!minutes || !seconds || !milliseconds) {
-    throw Error("Invalid time format")
+    throw Error(`Invalid time format for ${totalTime}`)
   }
 
   const totalMillis = minutes * 60000 + seconds * 1000 + milliseconds;
