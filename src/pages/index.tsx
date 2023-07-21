@@ -160,7 +160,7 @@ const Home: NextPage = () => {
               </div>
               <div className="ml-2">
                 <h2 className="text-2xl font-medium">Live Streams</h2>
-                <p className="py-6">his season is live broadcasted right on <Link
+                <p className="py-6">This season is live broadcasted right on <Link
                   className="text-blue-500 hover:text-blue-600"
                   target="_blank"
                   href="https://www.twitch.tv/revoltunited">Twitch</Link> to Re-Volts competitive community every Sunday starting at around 18:45 UTC, with the official race beginning around 19:30 UTC. It is commentated by Re-Volts shoutcasting regular, Honk (utqiagvik on Discord).</p>
