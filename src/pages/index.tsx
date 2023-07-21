@@ -151,7 +151,7 @@ const Home: NextPage = () => {
             <Card className="w-full block md:flex mt-4 px-6 py-20">
               <div className="sm:w-full md:w-1/2 lg:w-3/4 grow">
                 <Image
-                  src="/images/revolt-stream.png"
+                  src="/images/rvec-generic.png"
                   alt="Revolt Stream"
                   width={500}
                   height={500}
