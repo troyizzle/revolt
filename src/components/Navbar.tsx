@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Icons } from "./icons";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { type User } from "next-auth";
+import { MobileNav } from "./mobile-nav";
 
 type UserDropdownMenuProps = {
   user: User
@@ -90,6 +91,7 @@ export default function Navbar() {
             Leaderboard
           </Link>
         </div>
+        <MobileNav />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
             <ThemeToggler />
