@@ -29,7 +29,7 @@ function calculateTimeDifference(time1: string, time2: string) {
 
 function calculateAverageTime(totalTime: string, laps: number) {
   const [minutes, seconds, milliseconds] = totalTime.split(':').map(Number);
-  if (!minutes || !seconds || !milliseconds) {
+  if (minutes === undefined || seconds === undefined || milliseconds === undefined) {
     throw Error(`Invalid time format for ${totalTime}`)
   }
 
@@ -97,6 +97,12 @@ export const raceRouter = createTRPCRouter({
         if (index === 3) return;
 
         data.points += TOP_3_POINTS[index + 1] || 0
+      })
+
+      await ctx.prisma.race.deleteMany({
+        where: {
+          eventId: raceData.eventId,
+        }
       })
 
       const race = await ctx.prisma.race.create({
