@@ -14,6 +14,10 @@ const sidebarNavItems = [
     title: "Leagues"
   },
   {
+    href: "/admin/players",
+    title: "Players"
+  },
+  {
     href: "/admin/seasons",
     title: "Seasons"
   }
