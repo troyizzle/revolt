@@ -51,7 +51,11 @@ export default function LeaderboardPage() {
               {data.players.map((data, index) => (
                 <TableRow key={data.player}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{data.player}</TableCell>
+                  <TableCell>
+                    <Link href={`/players/${data.player}`}>
+                      {data.player}
+                    </Link>
+                  </TableCell>
                   {data.points.map((points, index) => (
                     <TableCell key={index}>{points}</TableCell>
                   ))}

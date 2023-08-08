@@ -10,6 +10,35 @@ export const playerRouter = createTRPCRouter({
     .query(({ ctx }) => {
       return ctx.prisma.player.findMany();
     }),
+  get: publicProcedure
+    .input(z.object({ uniqueName: z.string() }))
+    .query(({ ctx, input }) => {
+      const uniqueName = input.uniqueName.toLowerCase();
+
+      return ctx.prisma.player.findUnique({
+        where: {
+          uniqueName
+        },
+        include: {
+          races: {
+            orderBy: {
+              race: {
+                event: {
+                  order: 'asc'
+                }
+              }
+            },
+            include: {
+              race: {
+                include: {
+                  event: true
+                },
+              }
+            },
+          }
+        },
+      });
+    }),
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
