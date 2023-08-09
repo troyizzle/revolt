@@ -127,3 +127,11 @@ model PlayerRace {
   @@unique([playerId, raceId])
   @@unique([raceId, position])
 }
+
+model Suggestion {
+  id        String   @id @default(cuid())
+  name      String?
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

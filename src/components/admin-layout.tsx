@@ -20,7 +20,11 @@ const sidebarNavItems = [
   {
     href: "/admin/seasons",
     title: "Seasons"
-  }
+  },
+  {
+    href: "/admin/suggestions",
+    title: "Suggestions"
+  },
 ]
 
 type AdminLayoutProps = {

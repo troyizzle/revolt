@@ -12,6 +12,7 @@ type AdminNewModalProps<T extends FieldValues> = {
   modalDescription?: string
   open: boolean
   setIsOpen: (open: boolean) => void
+  renderCreateButton?: boolean
 }
 
 export default function AdminNewModal<T extends FieldValues>({
@@ -21,7 +22,8 @@ export default function AdminNewModal<T extends FieldValues>({
   modalTitle,
   modalDescription,
   open,
-  setIsOpen
+  setIsOpen,
+  renderCreateButton = true
 }: AdminNewModalProps<T>) {
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     await form.handleSubmit(onSubmit)(event);
@@ -33,10 +35,12 @@ export default function AdminNewModal<T extends FieldValues>({
   }
 
   return (
-    <Dialog open={open}>
-      <Button
-        onClick={() => setIsOpen(true)}
-        variant="default">Create</Button>
+    <Dialog open={open} onOpenChange={setIsOpen}>
+      {renderCreateButton && (
+        <Button
+          onClick={() => setIsOpen(true)}
+          variant="default">Create</Button>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{modalTitle}</DialogTitle>
@@ -52,7 +56,7 @@ export default function AdminNewModal<T extends FieldValues>({
             {children}
             <DialogFooter>
               <Button
-              type="button"
+                type="button"
                 onClick={handleClose}
                 variant="secondary">Cancel</Button>
               <Button

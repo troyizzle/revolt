@@ -1,12 +1,14 @@
 import { useTheme } from "next-themes";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Icons } from "./icons";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { type User } from "next-auth";
 import { MobileNav } from "./mobile-nav";
+import { useState } from "react";
+import SuggestionNewForm from "./forms/suggestions/new";
 
 type UserDropdownMenuProps = {
   user: User
@@ -79,20 +81,32 @@ function ThemeToggler() {
 export default function Navbar() {
   const { data: session } = useSession()
   const user = session?.user
+  const [suggestionModalOpen, setSuggestionModalOpen] = useState(false)
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <div className="container flex h-16 items-center">
+      <div className="container flex h-16 items-center justify-between">
         <div className="hidden gap-6 md:flex">
-          <Link href="/">
+          <Link href="/" className={buttonVariants({
+            variant: "link"
+          })}>
             Revolt
           </Link>
-          <Link href="/leaderboard">
+          <Link href="/leaderboard" className={buttonVariants({
+            variant: "link"
+          })}>
             Leaderboard
           </Link>
+          <Button
+            variant="outline"
+            onClick={() => setSuggestionModalOpen(true)}
+          >
+            Add a suggestion
+          </Button>
+          {suggestionModalOpen && <SuggestionNewForm open={suggestionModalOpen} setIsOpen={setSuggestionModalOpen} />}
         </div>
         <MobileNav />
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div>
           <nav className="flex items-center space-x-2">
             <ThemeToggler />
             {user ? (

@@ -5,6 +5,7 @@ import { eventRouter } from "./routers/event";
 import { seasonRouter } from "./routers/season";
 import { leagueRouter } from "./routers/league";
 import { playerRouter } from "./routers/player";
+import { suggestionRouter } from "./routers/suggestion";
 
 /**
  * This is the primary router for your server.
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   player: playerRouter,
   race: raceRouter,
   season: seasonRouter,
+  suggestion: suggestionRouter,
   user: userRouter
 });
 
